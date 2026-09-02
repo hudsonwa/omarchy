@@ -101,5 +101,15 @@ write_usb_devices '27c6:1234:Goodix Fingerprint USB Device'
 bind_driver '1-0/1-0:1.0' uvcvideo
 assert_detects "a self-named reader is detected with a driver bound"
 
+# Chipsailing's CS9711 is a single-purpose fingerprint module (only libfprint
+# drivers it), so a vendor-id match is enough here, same as the other
+# single-purpose vendors in the list.
+write_usb_devices '2541:0236:CS9711Fingprint'
+assert_detects "the Chipsailing CS9711 is detected by its vendor id"
+
+write_usb_devices '2541:0236'
+bind_driver '1-0/1-0:1.0' uvcvideo
+assert_rejects "a Chipsailing device bound to a kernel driver is rejected"
+
 write_usb_devices '1234:5678:Generic USB Device'
 assert_rejects "a machine with no matching USB devices detects nothing"
