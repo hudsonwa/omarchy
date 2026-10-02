@@ -4,7 +4,7 @@ if [[ $product_name =~ MacBook[89],1|MacBook1[02],1|MacBookPro13,[123]|MacBookPr
   echo "Detected MacBook with SPI keyboard"
 
   # macbook12-spi-driver-dkms is obsolete: applespi is mainlined (it ships in
-  # the linux package, and its header that the out-of-tree copy needs was
+  # the kernel package, and its header that the out-of-tree copy needs was
   # removed in 6.12), so the DKMS build fails on every kernel update once
   # linux-headers is present. Only the initramfs drop-in below is needed to
   # get the in-tree module into the initramfs (load-bearing for LUKS roots).

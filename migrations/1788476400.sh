@@ -1,6 +1,6 @@
 echo "Remove the obsolete MacBook SPI keyboard DKMS package"
 
-# applespi is mainlined (it ships with the linux package), so the out-of-tree
+# applespi is mainlined (it ships with the kernel package), so the out-of-tree
 # driver cannot build on current kernels: its include was removed in kernel
 # 6.12 and the DKMS build fails on every kernel update once linux-headers is
 # present. The initramfs drop-in written by
