@@ -74,13 +74,14 @@ if [[ $app_lc == "whatsapp" ]]; then
     # Reverse of the migration's append, one expression per position the entry
     # can hold: sole, first, middle, last. Every one carries a boundary on both
     # sides, so a sibling whose name merely starts with this path keeps its own
-    # name. A line left loading nothing then goes. The path contains slashes,
-    # so no address may use / as delimiter.
+    # name, and only --load-extension lines are touched. A line left loading
+    # nothing then goes. The path contains slashes, so no substitution may use /
+    # as delimiter.
     sed -i --follow-symlinks \
       -e "s|^--load-extension=$whatsapp_slim_ext\$|--load-extension=|" \
       -e "s|^--load-extension=$whatsapp_slim_ext,|--load-extension=|" \
-      -e "s|,$whatsapp_slim_ext,|,|" \
-      -e "s|,$whatsapp_slim_ext\$||" \
+      -e "/^--load-extension=/s|,$whatsapp_slim_ext,|,|" \
+      -e "/^--load-extension=/s|,$whatsapp_slim_ext\$||" \
       -e '/^--load-extension=$/d' \
       "$flag_file"
   done

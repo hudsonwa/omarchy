@@ -111,6 +111,27 @@ grep -q -- "--load-extension=$others,$slim-backup$" "$home/.config/brave-flags.c
     "$(cat "$home/.config/brave-flags.conf")"
 pass "only the slim entry itself is stripped"
 
+# Other flags can name the same path, and removing the web app is no reason to
+# rewrite them.
+cat >"$home/.local/share/applications/WhatsApp.desktop" <<EOF
+[Desktop Entry]
+Name=WhatsApp
+Exec=omarchy-launch-webapp https://web.whatsapp.com/
+Icon=whatsapp
+EOF
+cat >"$home/.config/brave-flags.conf" <<EOF
+--load-extension=$others,$slim
+--disable-extensions-except=$others,$slim
+EOF
+remove WhatsApp
+grep -q -- "--load-extension=$others$" "$home/.config/brave-flags.conf" ||
+  fail "the slim entry is stripped beside another flag naming it" \
+    "$(cat "$home/.config/brave-flags.conf")"
+grep -q -- "--disable-extensions-except=$others,$slim$" "$home/.config/brave-flags.conf" ||
+  fail "flags other than --load-extension are left alone" \
+    "$(cat "$home/.config/brave-flags.conf")"
+pass "only --load-extension lines are rewritten"
+
 # Remove -> Preinstalls runs omarchy-webapp-remove-all, which has its own
 # loop and never called the single-command path: it must surface the same
 # paired cleanup, or the "I want none of the web apps" route still leaves the
