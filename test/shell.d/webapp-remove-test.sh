@@ -122,12 +122,14 @@ EOF
 cat >"$home/.config/brave-flags.conf" <<EOF
 --load-extension=$others,$slim
 --disable-extensions-except=$others,$slim
+--disable-extensions-except=$others,$slim,$others
 EOF
 remove WhatsApp
 grep -q -- "--load-extension=$others$" "$home/.config/brave-flags.conf" ||
   fail "the slim entry is stripped beside another flag naming it" \
     "$(cat "$home/.config/brave-flags.conf")"
-grep -q -- "--disable-extensions-except=$others,$slim$" "$home/.config/brave-flags.conf" ||
+grep -q -- "--disable-extensions-except=$others,$slim$" "$home/.config/brave-flags.conf" &&
+  grep -q -- "--disable-extensions-except=$others,$slim,$others$" "$home/.config/brave-flags.conf" ||
   fail "flags other than --load-extension are left alone" \
     "$(cat "$home/.config/brave-flags.conf")"
 pass "only --load-extension lines are rewritten"
