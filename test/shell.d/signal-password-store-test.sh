@@ -15,17 +15,17 @@ flags="$HOME/.config/signal-desktop-flags.conf"
 
 # The migration pins the store on an existing install, without touching a
 # user-chosen --password-store line.
-bash "$migration"
+bash -euo pipefail "$migration"
 grep -qx -- '--password-store=gnome-libsecret' "$flags" ||
   fail "the migration pins Signal to gnome-libsecret" "$(cat "$flags")"
 lines_before=$(wc -l <"$flags")
-bash "$migration"
+bash -euo pipefail "$migration"
 (( $(wc -l <"$flags") == lines_before )) ||
   fail "the migration is idempotent" "$(cat "$flags")"
 pass "existing installs get the Signal password-store pin once"
 
 printf '%s\n' '--password-store=basic_text' >"$flags"
-bash "$migration"
+bash -euo pipefail "$migration"
 grep -qx -- '--password-store=basic_text' "$flags" ||
   fail "a user-chosen password-store line is respected" "$(cat "$flags")"
 grep -q -- '--password-store=gnome-libsecret' "$flags" &&
@@ -60,7 +60,6 @@ grep -qx -- '--password-store=gnome-libsecret' "$flags" ||
   fail "the install path pins Signal before first launch" "$(cat "$flags" 2>/dev/null || echo missing)"
 grep -qx 'signal-desktop' "$tmp_dir/pkg-add.log" ||
   fail "Signal is still installed" "$(cat "$tmp_dir/pkg-add.log")"
-rm -f "$flags"
 bash "$tmp_dir/leaf.sh" >/dev/null
 (( $(grep -c -- '--password-store=' "$flags") == 1 )) ||
   fail "re-installing does not duplicate the pin" "$(cat "$flags")"
